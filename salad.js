@@ -10,7 +10,7 @@
 
 //Onput Reservation Data Example
 const inputTestJson = {
-    "날짜": "{\"from\": {\"date\": \"2023-03-13\", \"dateTag\": null, \"dateHeadword\": null, \"year\": null, \"month\": null, \"day\": null}, \"to\": {\"date\": \"2023-03-19\", \"dateTag\": null, \"dateHeadword\": null, \"year\": null, \"month\": null, \"day\": null}, \"polynomial\": \"current_week\", \"calendar_type\": \"solar\"}"
+    "날짜": "{\"from\": {\"date\": \"2023-03-13\", \"dateTag\": null, \"dateHeadword\": null, \"year\": null, \"month\": null, \"day\": null}, \"to\": {\"date\": \"2023-03-19\", \"dateTag\": null, \"dateHeadword\": null, \"year\": null, \"month\": null, \"day\": null}, \"polynomial\": \"current_week\", \"calendar_type\": \"solar\", \"emp_no\": \"20210013\"}"
 }
 
 //Output Reservation Data Example (https://i.kakao.com/docs/skill-response-format#skillpayload)
@@ -89,5 +89,64 @@ const responseTestJson = {
   };
 
 // Reservation Function
-const reservation = inputTestJson => responseTestJson;
-console.log(reservation);
+const reservation = inputTestJson => {
+  
+  var input = JSON.parse(inputTestJson.날짜);
+  var emp_no = '';
+  var from_date = '';
+  var to_date = '';
+
+  if(input.emp_no !== null){
+    emp_no = input.emp_no;
+    console.log(emp_no);
+  }
+
+  if(input.from.date !== null){
+    from_date = input.from.date;
+    console.log(from_date);
+  }
+
+  if(input.to.date !== null){
+    to_date = input.to.date;
+    console.log(to_date);
+  }
+
+  // context.callbackWaitsForEmptyEventLoop = false;
+  // const corsHeader = {
+  //   "Access-Control-Allow-Origin": "*",
+  //   "Access-Control-Allow-Headers":
+  //     "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token"
+  // };
+
+  let sql = "select * from test_table";
+
+  // if (vent.resource === '/hist/inquire') {
+  //   sql = "select id from test_table";
+  // } else if (event.resource === '/hist/sign') {
+  //   sql = "select column1 from test_table";
+  // } else if (event.resource === '/hist/cancel') {
+  //   sql = "select column2 from test_table";
+  // }
+
+  if (emp_no !== '' && from_date !== '' && to_date !== '') {
+    sql = "select * from test_table where emp_no = " + emp_no + " and red_date >= " + from_date + " and reg_date <= " + to_date;
+  }
+
+
+  console.log(sql);
+
+  // con.query(sql, (err, res) => {
+  //   if (err) {
+  //     throw err
+  //   }
+  //   callback(null, {
+  //     'header': corsHeader,
+  //     'statusCode': 200,
+  //     'body': res
+  //   })
+  // })
+
+  // return responseTestJson
+};
+
+reservation(inputTestJson);
