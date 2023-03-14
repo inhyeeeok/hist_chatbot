@@ -7,8 +7,8 @@ const conn = db_config.init();
 
 const sql = "select * from test_table";
 
-db_config.query(conn, sql, function (err, res) {
-    console.log(err, res);
+db_config.query(conn, sql, function (flag, res) {
+    console.log(flag, res);
 });
 
 
