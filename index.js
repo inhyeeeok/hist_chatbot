@@ -1,48 +1,33 @@
-const mysql = require('mysql2');
+const sampleJson = require(__dirname + '/sampleJson.js');
 
-const con = mysql.createConnection({
-  host: process.env.RDS_HOSTNAME,
-  user: process.env.RDS_USERNAME,
-  password: process.env.RDS_PASSWORD,
-  port: process.env.RDS_PORT,
-  database: process.env.RDS_DATABASE
-});
 
 exports.handler = (event, context, callback) => {
-  // allows for using callbacks as finish/error-handlers
-
-  console.log("쿼리파라미터:" + event.pathParameters);
-  console.log("헤더:" + JSON.stringify(event.headers));
-  console.log("바디:" + event.body);
-  console.log("바디상세:" + event.body.action.params);
-  console.log("이벤트:" + JSON.stringify(event.resource));
-
+  //node 10버전 이후로는 context로 인하여 함수가 중지되지 않아 502 에러가 뜬다.
+  //그렇기에 아래 구문을 실행하고, callback으로 함수를 중단한다.
   context.callbackWaitsForEmptyEventLoop = false;
+
+  //api gateway에서 CORS 활성화 버튼을 누르면 cors가 열리나
+  //모든 브라우저에 대해 cors를 열면 해달 기능이 작동하지 않는다.
+  //그러므로 백엔드 코드 header에 cors를 열어주어야 한다.
   const corsHeader = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers":
-      "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token"
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
   };
 
-  let sql = "select * from test_table";
+  var returnData = {};
 
   if (event.resource === '/hist/inquire') {
-    sql = "select id from test_table";
+    returnData = event;
   } else if (event.resource === '/hist/sign') {
-    sql = "select column1 from test_table";
+    returnData = sampleJson.responseSampleJson();
   } else if (event.resource === '/hist/cancel') {
-    sql = "select column2 from test_table";
+    returnData = sampleJson.responseSampleJson('1');
   }
 
-  con.query(sql, (err, res) => {
-    if (err) {
-      throw err
-    }
-    callback(null, {
-      'header': corsHeader,
-      'statusCode': 200,
-      'body': res
-    })
+  callback(null, {
+    'header': corsHeader,
+    'statusCode': 200,
+    'body': JSON.stringify(returnData)
   })
 };
 
