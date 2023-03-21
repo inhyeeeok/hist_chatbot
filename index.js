@@ -1,4 +1,5 @@
 const sampleJson = require(__dirname + '/sampleJson.js');
+const saladFunction = require(__dirname + '/salad.js');
 
 
 exports.handler = (event, context, callback) => {
@@ -15,13 +16,28 @@ exports.handler = (event, context, callback) => {
   };
 
   var returnData = {};
+  console.log('들어온값' + JSON.stringify(JSON.parse(event['body'])['action']['params']));
+  console.log('블록ID ' + JSON.stringify(JSON.parse(event['body'])['userRequest']['block']['id']));
+  console.log('유저ID ' + JSON.stringify(JSON.parse(event['body'])['userRequest']['user']['id']));
+  console.log('이벤트값' + JSON.stringify(event));
 
-  if (event.resource === '/hist/inquire') {
-    returnData = event;
-  } else if (event.resource === '/hist/sign') {
-    returnData = sampleJson.responseSampleJson();
-  } else if (event.resource === '/hist/cancel') {
-    returnData = sampleJson.responseSampleJson('1');
+
+  const block_id = JSON.parse(event['body'])['userRequest']['block']['id'];
+  const user_id = JSON.parse(event['body'])['userRequest']['user']['id'];
+
+  switch (event.resource) {
+    case '/hist/inquire':
+      returnData = event;
+      break;
+    case '/hist/sign':
+      returnData = sampleJson.responseSampleJson();
+      break;
+    case '/hist/salad': //샐러드 스킬서버
+      returnData = saladFunction.returnRequestJson(block_id, JSON.parse(event['body']));
+      break;
+    default:
+      returnData = event;
+      break;
   }
 
   callback(null, {

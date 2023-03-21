@@ -1,3 +1,5 @@
+//Data Example (https://i.kakao.com/docs/skill-response-format#skillpayload)
+
 module.exports = {
     requestSampleJson: () => {
         return requestSampleJson;
@@ -18,8 +20,50 @@ module.exports = {
                 break;
         }
         return returnJson;
+    },
+
+    returnRequestJson: (param) => {
+        console.log(JSON.stringify(param));
+        return simpleText(param);
     }
 }
+
+const simpleText = param => {
+    return {
+        "version": "2.0",
+        "template": {
+            "outputs": [
+                {
+                    "simpleText": {
+                        "text": param
+                    }
+                }
+            ],
+            "quickReplies": [
+                {
+                    "messageText": "인기 메뉴",
+                    "action": "message",
+                    "label": "3월 20일"
+                },
+                {
+                    "messageText": "최근 주문",
+                    "action": "message",
+                    "label": "3월 27일"
+                },
+                {
+                    "action": "block",
+                    "label": "4월 03일",
+                    "blockId": "6413b8bec628e8623bc9be7a",
+                    "extra": {
+                        "sys_date_day_params": "4월 03일",
+                        "key2": "value2"
+                    }
+                }
+            ]
+        }
+    }
+}
+
 
 const requestSampleJson = {
     "userRequest": {
@@ -53,7 +97,7 @@ const requestSampleJson = {
     }
 }
 
-
+//Response Data Example (https://i.kakao.com/docs/skill-response-format#skillpayload)
 const responseSampleJson = {
     "version": "2.0",
     "template": {
