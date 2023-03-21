@@ -26,7 +26,7 @@ module.exports = {
         // insert Data
         returnData = responseEndReserve(param['action']['clientExtra']['param']);
         break;
-      default:
+      default: //block_id를 찾을 수 없을 경우 예외처리 처음으로 가도록
         returnData = responseEndReserve();
         break;
     }
@@ -181,7 +181,7 @@ const responseEndReserve = param => {
   //     ]
   //   }
   // }
-  
+
 
 };
 
